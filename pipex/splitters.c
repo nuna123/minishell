@@ -12,28 +12,6 @@
 
 #include "pipex.h"
 
-//ADDING ALL ARGV TO ONE INPUT LINE
-static char	*stringize(char *argv[])
-{
-	char	*temp;
-	char	*cmds;
-	int		i;
-
-	i = -1;
-	cmds = ft_strdup("");
-	while (argv[++i])
-	{
-		temp = ft_strjoin(cmds, argv[i]);
-		cmds = (free (cmds), temp);
-		if (argv[i + 1])
-		{
-			temp = ft_strjoin(cmds, " ");
-			cmds = (free (cmds), temp);
-		}
-	}
-	return (cmds);
-}
-
 static char	*expand_arg(char *str, int counter)
 {
 	char	*argname;
@@ -47,8 +25,8 @@ static char	*expand_arg(char *str, int counter)
 	argname = ft_substr (str, counter + 1, argname_len);
 	arg = getenv(argname);
 	newstr = ft_calloc((ft_strlen(str) - argname_len)
-			+ ft_strlen(arg), sizeof(char));
-	ft_strlcpy(newstr, str, counter);
+			+ ft_strlen(arg) + 1, sizeof(char));
+	ft_strlcpy(newstr, str, counter + 1);
 	if (arg)
 		ft_strlcpy(ft_strchr(newstr, 0), arg, ft_strlen(arg) + 1);
 	else
@@ -56,7 +34,35 @@ static char	*expand_arg(char *str, int counter)
 	ft_strlcpy(ft_strchr(newstr, 0),
 		str + counter + argname_len + 1, ft_strlen(str) + 1);
 	free(argname);
+	free(str);
 	return (newstr);
+}
+
+//ADDING ALL ARGV TO ONE INPUT LINE
+static char	*stringize(char *argv[])
+{
+	char	*cmds;
+	int		i;
+	int		is_quotes;
+
+	i = -1;
+	cmds = ft_strdup("");
+	while (argv[++i])
+	{
+		cmds = ft_new_strjoin(cmds, argv[i]);
+		if (argv[i + 1])
+			cmds = ft_new_strjoin(cmds, " ");
+	}
+	i = -1;
+	is_quotes = 0;
+	while (cmds[++i])
+	{
+		if (cmds[i] == '\'' && (i <= 0 || cmds[i - 1] != '\\'))
+			is_quotes = !is_quotes;
+		else if (cmds[i] == '$' && !is_quotes)
+			cmds = expand_arg (cmds, i);
+	}
+	return (cmds);
 }
 
 static void	split_extand(int *is_quotes, char *str, int *counter)
@@ -124,8 +130,8 @@ char	**resplit_argv(int argc, char *argv[])
 	if (argc < 2)
 		return (argv);
 	str = stringize (argv);
-	printf ("STR:  {%s}\n", str);
 	ret = split_string (str);
 	free (str);
 	return (ret);
 }
+	// printf ("STR:  {%s}\n", str);

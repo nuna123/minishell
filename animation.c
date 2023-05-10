@@ -85,6 +85,7 @@ void	ft_animate(int exit)
 	int		i;
 	int		maxlines;
 
+	return ;
 	maxlines = count_new_lines(SHELL8) + 1;
 	i = -1;
 	while (++i < maxlines)
