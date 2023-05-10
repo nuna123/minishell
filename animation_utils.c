@@ -6,7 +6,7 @@
 /*   By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 15:30:46 by jbartosi          #+#    #+#             */
-/*   Updated: 2023/03/21 16:10:40 by jbartosi         ###   ########.fr       */
+/*   Updated: 2023/03/28 12:36:10 by jbartosi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 	Returns number of \n in string
 */
-
 int	count_new_lines(char *str)
 {
 	int	count;
@@ -33,7 +32,6 @@ int	count_new_lines(char *str)
 	Goes up a line and deletes it n number of times
 	until the printed picture is gone
 */
-
 void	clean_terminal(int lines)
 {
 	int	i;

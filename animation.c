@@ -6,7 +6,7 @@
 /*   By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 11:05:33 by jbartosi          #+#    #+#             */
-/*   Updated: 2023/03/22 10:38:15 by jbartosi         ###   ########.fr       */
+/*   Updated: 2023/03/28 12:35:58 by jbartosi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 
 	Prints enlarging logo of 42 in the terminal
 */
-
 void	logo(void)
 {
 	char	*logo[9];
@@ -49,7 +48,6 @@ void	logo(void)
 
 	Prints shrinking shell in the terminal
 */
-
 void	shell(void)
 {
 	char	*shell[9];
@@ -82,7 +80,6 @@ void	shell(void)
 	or shrinking seashell.
 	Cleans and prepares space beforehand
 */
-
 void	ft_animate(int exit)
 {
 	int		i;

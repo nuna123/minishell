@@ -57,6 +57,7 @@ static void	get_outfile(int *argc, char **argv[], t_prog *prog)
 		return ;
 	if (ft_strncmp((*argv)[(*argc) - 2], ">", 1) == 0)
 	{
+		prog->outfile_fd = -1;
 		prog->outfile_path = (*argv)[*argc - 1];
 		if (ft_strncmp((*argv)[*argc - 2], ">", 2) == 0)
 			prog->outfile_permissions = (O_CREAT | O_WRONLY | O_TRUNC);
@@ -80,8 +81,11 @@ static void	get_cmds(char *argv[], t_prog *prog)
 	{
 		temp = ft_strjoin(cmds, argv[i]);
 		cmds = (free (cmds), temp);
-		temp = ft_strjoin(cmds, " ");
-		cmds = (free (cmds), temp);
+		if (argv[i + 1])
+		{
+			temp = ft_strjoin(cmds, " ");
+			cmds = (free (cmds), temp);
+		}
 	}
 	prog->cmds = ft_split(cmds, '|');
 	free(cmds);
@@ -89,43 +93,23 @@ static void	get_cmds(char *argv[], t_prog *prog)
 	while (prog->cmds[++i])
 	{
 		temp = ft_strtrim(prog->cmds[i], " ");
-		free (prog->cmds[i]);
-		prog->cmds[i] = temp;
+		prog->cmds[i] = (free (prog->cmds[i]), temp);
 	}
 	prog->cmd_num = ft_arrlen((void **) prog->cmds);
 }
-/* 
-static void	get_cmds(char *argv[], t_prog *prog)
-{
-	int	i;
-	int	j;
-
-	i = 1;
-	while (argv[i])
-	{
-		if (ft_strncmp(argv[i], "|", 2) == 0)
-		{
-			j = i - 1;
-			while (argv[++j])
-				argv[j] = argv[j + 1];
-		}
-		else
-			i++;
-	}
-	prog->cmds = argv;
-	prog->cmd_num = i;
-}
- */
 
 t_prog	*prog_creation(int argc, char *argv[], char *env[])
 {
 	t_prog	*prog;
+	char	**argv_release_ptr;
 
 	prog = init_prog(env);
+	argv = resplit_argv(argc, argv);
+	argv_release_ptr = argv;
 	argc -= 1;
 	argv += 1;
 	get_infile(&argc, &argv, prog);
 	get_outfile(&argc, &argv, prog);
 	get_cmds(argv, prog);
-	return (prog);
+	return (free_arr((void **) argv_release_ptr), prog);
 }

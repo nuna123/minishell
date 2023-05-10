@@ -6,12 +6,12 @@
 #    By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/15 13:56:55 by jbartosi          #+#    #+#              #
-#    Updated: 2023/03/21 15:31:46 by jbartosi         ###   ########.fr        #
+#    Updated: 2023/04/08 13:28:17 by jbartosi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror -g
 
 LIBFT_FOL = Libft/
 LIBFT = ${addprefix ${LIBFT_FOL}, libft.a}
@@ -26,7 +26,14 @@ SRCS	=	minishell \
 			commands \
 			split_utils \
 			animation \
-			animation_utils
+			animation_utils \
+			enviroment \
+			commands_more \
+			variables \
+			change_directory \
+			export \
+			export_utils \
+			export_checker
 
 OBJ_FOL	=	objs/
 
@@ -51,7 +58,7 @@ ${LIBS}:
 	@ echo "${GREEN}Finished making libraries :D${NRM_COLOR}"
 
 ${NAME}: ${LIBS} ${SRC_FILES}
-	cc ${CFLAGS} ${SRC_FILES} ${LIBS} -I${LIBFT_FOL} -lreadline -o $@
+	@ cc ${CFLAGS} ${SRC_FILES} ${LIBS} -I${LIBFT_FOL} -lreadline -o $@
 	@ echo "${GREEN}${NAME} compiled :D${NRM_COLOR}"
 
 clean:

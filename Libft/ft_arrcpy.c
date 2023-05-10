@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nroth <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/11 12:02:10 by nroth             #+#    #+#             */
-/*   Updated: 2023/01/11 12:02:14 by nroth            ###   ########.fr       */
+/*   Created: 2023/01/11 16:16:24 by nroth             #+#    #+#             */
+/*   Updated: 2023/01/11 16:16:25 by nroth            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-size_t	ft_strlcpy(char *dest, char *src, size_t size)
+/* 
+	copies (NULL terminated) src into dest,
+	no memory is allocated or freed,
+	dest will be NULL terminated
+ */
+void	ft_arrcpy(char **dest, char **src)
 {
-	size_t	i;
-	size_t	src_len;
-
-	i = 0;
-	src_len = ft_strlen(src);
-	if (size < 1 || !src)
-		return (src_len);
-	while (src[i] && i < size - 1)
+	while (*src)
 	{
-		dest[i] = src[i];
-		i++;
+		*dest = *src;
+		dest++;
+		src++;
 	}
-	dest[i] = '\0';
-	return (src_len);
+	*dest = NULL;
 }

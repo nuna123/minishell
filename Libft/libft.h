@@ -55,8 +55,6 @@ int				ft_atoi(const char *nptr);
 void			*ft_calloc(size_t nmemb, size_t size);
 char			*ft_strdup(const char *s);
 char			*str_append(char *s1, char *s2, char *spacer);
-size_t			ft_arrlen(void **s);
-void			ft_cpyarr(char **dest, char **src);
 
 // PT2
 char			*ft_substr(char const *s, unsigned int start, size_t len);
@@ -86,5 +84,11 @@ t_list			*ft_lstmap(t_list *lst, void *(*f)(void *),
 //EXTRAS
 char			*get_next_line(int fd);
 int				ft_printf(const char *s, ...);
+
+//ARRAY OPERATIONS
+size_t			ft_arrlen(void **s);
+void			ft_arrcpy(char **dest, char **src);
+char			**ft_arrappend(char **arr, char *to_append);
+void			ft_arrfree(void **arr);
 
 #endif

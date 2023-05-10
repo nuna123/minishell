@@ -6,7 +6,7 @@
 /*   By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/09 16:12:32 by jbartosi          #+#    #+#             */
-/*   Updated: 2023/03/22 10:43:15 by jbartosi         ###   ########.fr       */
+/*   Updated: 2023/04/08 16:07:42 by jbartosi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 	Used in shortening home path
 	/nfs/home/USER to ~
 */
-
 static char	*ft_strtrim_begin(char const *s1, char const *set)
 {
 	int		start;
@@ -49,7 +48,6 @@ static char	*ft_strtrim_begin(char const *s1, char const *set)
 	and if it contains home path, it replaces it
 	with ~
 */
-
 static char	*shorten_pwd(void)
 {
 	char	pwd[10000];
@@ -80,11 +78,34 @@ static char	*shorten_pwd(void)
 
 	Frees the shell prompt and gets a new one
 */
-
-void	update_prompt(char **shell_promt)
+void	update_prompt(t_mshell *shell)
 {
-	free(*shell_promt);
-	ft_get_prompt(shell_promt);
+	free(shell->shell_prompt);
+	ft_get_prompt(shell);
+}
+
+/*	Errno_prompt
+
+	Checks for exit status of process, if it's not 0, displays it in prompt
+*/
+void	ft_errno_prompt(t_mshell *shell, char **swd)
+{
+	char	*exit_num;
+
+	exit_num = ft_itoa(shell->exit_status);
+	if (shell->exit_status == 0)
+		ft_strlcat(shell->shell_prompt, "> ",
+			ft_strlen(shell->shell_prompt) + 3);
+	else
+	{
+		ft_strlcat(shell->shell_prompt, "\001\e[1;31m\002 [",
+			ft_strlen(shell->shell_prompt) + 20);
+		ft_strlcat(shell->shell_prompt, exit_num,
+			ft_strlen(shell->shell_prompt) + ft_strlen(exit_num) + 1);
+		ft_strlcat(shell->shell_prompt, "]\001\e[0m\002> ",
+			ft_strlen(shell->shell_prompt) + 20);
+	}
+	return (free(*swd), free(exit_num));
 }
 
 /*	Get_prompt
@@ -92,30 +113,25 @@ void	update_prompt(char **shell_promt)
 	Takes shorted working directory from shorten_pwd()
 	and manipulates it to look like prompt from fish
 */
-
-void	ft_get_prompt(char **shell_promt)
+void	ft_get_prompt(t_mshell *shell)
 {
-	char	user[10000];
-	char	*name;
 	char	*swd;
 
 	swd = shorten_pwd();
-	ft_strlcpy(user, getenv("USER"), 10000);
-	name = malloc(100);
-	ft_strlcpy(name, getenv("SESSION_MANAGER"), 100);
-	*shell_promt = (char *)malloc(ft_strlen(user)
-			+ ft_strlen(name) + 14);
-	ft_strlcpy(*shell_promt, MAGENTA, 8);
-	ft_strlcat(*shell_promt, user, ft_strlen(*shell_promt)
-		+ ft_strlen(user) + 1);
-	ft_strlcat(*shell_promt, END, ft_strlen(*shell_promt) + 5);
-	ft_strlcat(*shell_promt, "@", ft_strlen(*shell_promt) + 2);
-	ft_strlcat(*shell_promt, name + 6, ft_strlen(*shell_promt)
-		+ 7);
-	ft_strlcat(*shell_promt, " ", ft_strlen(*shell_promt) + 2);
-	ft_strlcat(*shell_promt, MAGENTA, ft_strlen(*shell_promt) + 9);
-	ft_strlcat(*shell_promt, swd, ft_strlen(*shell_promt) + ft_strlen(swd) + 1);
-	ft_strlcat(*shell_promt, END, ft_strlen(*shell_promt) + 5);
-	ft_strlcat(*shell_promt, "> ", ft_strlen(*shell_promt) + 3);
-	return (free(name), free(swd));
+	shell->shell_prompt = (char *)malloc(ft_strlen(shell->user)
+			+ ft_strlen(shell->name) + ft_strlen(swd) + 60);
+	ft_strlcpy(shell->shell_prompt, MAGENTA, 20);
+	ft_strlcat(shell->shell_prompt, shell->user, ft_strlen(shell->shell_prompt)
+		+ ft_strlen(shell->user) + 1);
+	ft_strlcat(shell->shell_prompt, END, ft_strlen(shell->shell_prompt) + 20);
+	ft_strlcat(shell->shell_prompt, "@", ft_strlen(shell->shell_prompt) + 2);
+	ft_strlcat(shell->shell_prompt, shell->name, ft_strlen(shell->shell_prompt)
+		+ ft_strlen(shell->name) + 1);
+	ft_strlcat(shell->shell_prompt, " ", ft_strlen(shell->shell_prompt) + 2);
+	ft_strlcat(shell->shell_prompt, MAGENTA,
+		ft_strlen(shell->shell_prompt) + 20);
+	ft_strlcat(shell->shell_prompt, swd,
+		ft_strlen(shell->shell_prompt) + ft_strlen(swd) + 1);
+	ft_strlcat(shell->shell_prompt, END, ft_strlen(shell->shell_prompt) + 20);
+	ft_errno_prompt(shell, &swd);
 }

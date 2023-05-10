@@ -6,7 +6,7 @@
 /*   By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 13:56:16 by jbartosi          #+#    #+#             */
-/*   Updated: 2023/03/22 11:13:12 by jbartosi         ###   ########.fr       */
+/*   Updated: 2023/04/29 14:35:26 by jbartosi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,77 @@
 # include <sys/ioctl.h>
 # include <errno.h>
 
+typedef struct s_var
+{
+	char	*name;
+	char	*val;
+}				t_var;
+
+typedef struct s_mshell
+{
+	struct s_var	*vars;
+	char			*user;
+	char			*home;
+	char			*name;
+	char			*shell_prompt;
+	char			*last_line;
+	char			*pipex_path;
+	int				exit_status;
+	char			*old_path;
+}				t_mshell;
+
+//	Minishell.c
+
+void	free_vals(t_mshell *shell);
+int		ft_exit(char *line, t_mshell *shell, char **command);
+
+//	Enviroment.c
+
+int		init_env(char **envp, t_mshell *shell);
+int		check_env(t_mshell *shell);
+
 //	Prompt.c
 
-# define MAGENTA	"\033[0;35m"
-# define END		"\033[0m"
+# define MAGENTA	"\001\e[0;35m\002"
+# define END		"\001\e[0m\002"
 
-void	ft_get_prompt(char **shell_promt);
-void	update_prompt(char **shell_promt);
+void	ft_get_prompt(t_mshell *shell);
+void	update_prompt(t_mshell *shell);
 
 //	Commands.c
 
-void	handle_commands(char **command, char *line,
-			char **shell_prompt, char *env[]);
+int		handle_commands(char **command, char *line, t_mshell *shell);
+
+//	Commands_more.c
+
+void	handle_env(t_mshell *shell);
+void	handle_unset(char **command, t_mshell *shell);
+// void	print_pwd(t_mshell *shell);
+void	handle_exit(char **command, t_mshell *shell);
+
+//	Variables.c
+
+int		handle_variables(char **command, t_mshell *s);
+char	*get_hostname(void);
+
+//	Export.c
+
+void	handle_export(char **command, t_mshell *shell);
+
+//	Export_utils.c
+
+void	recreate(char **command, t_mshell *shell);
+int		is_defined(char **command, t_mshell *shell);
+char	**convert_toenvp(t_mshell *shell);
+int		count_vals(t_mshell *shell);
+
+//	Export_checker.c
+
+int		valid_identifier(char **command, t_mshell *shell);
+
+//	Change_directory.c
+
+void	handle_cd(char **command, t_mshell *shell);
 
 //	Split_utils.c
 

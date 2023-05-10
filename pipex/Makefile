@@ -7,7 +7,9 @@ SRC_FILES		=	pipex\
 					piper\
 					get_full_cmd\
 					pipex_utils\
-					prog_creation
+					prog_creation\
+					commands\
+					splitters
 
 
 LIBFT_FOL		= ../Libft/

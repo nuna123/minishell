@@ -41,55 +41,61 @@ void	printeeer(char **cmd1, char **cmd2, char *infile_path, char *outfile_path)
 
  */
 
-int	figure_fd1(t_prog *prog, int i, int pipees[2])
+void	get_outfile_fd(int i, t_prog *prog, int file_fds[2], int pipees[2])
 {
-	int	res;
-
-	res = -1;
-	if (i != prog->cmd_num - 1 && i != prog->cmd_num - 2)
-		res = pipees[1];
-	else if (prog->outfile_path)
-		res = open(prog->outfile_path, prog->outfile_permissions, 0666);
+	if (i == prog->cmd_num - 1)
+	{
+		file_fds[1] = prog->outfile_fd;
+		if (prog->outfile_fd == -1)
+			file_fds[1] = open (prog->outfile_path,
+					prog->outfile_permissions, 0666);
+		if (file_fds[1] == -1)
+		{
+			perror(prog->outfile_path);
+			exit_prog (prog, errno);
+		}
+	}
 	else
-		res = prog->outfile_fd;
-	return (res);
+	{
+		pipe (pipees);
+		file_fds[1] = pipees[1];
+	}
 }
 
-void	pipe_the_stuff(t_prog *prog)
+int	pipe_the_stuff(t_prog *prog)
 {
-	int		file_fds[2];
-	char	**cmds[2];
-	int		pipees[2];
 	int		i;
 	int		stat;
+	int		file_fds[2];
+	int		pipees[2];
+	char	**cmd;
 
-	i = 0;
-	cmds[1] = NULL;
-	while (i < prog->cmd_num)
+	i = -1;
+	file_fds[0] = prog->infile_fd;
+	if (prog->infile_fd == -1)
+		file_fds[0] = open (prog->infile_path, O_RDONLY);
+	if (file_fds[0] == -1)
 	{
-		cmds[0] = get_full_cmd(prog->cmds[i], prog->env);
-		if (i + 1 < prog->cmd_num)
-			cmds[1] = get_full_cmd(prog->cmds[i + 1], prog->env);
-		file_fds[0] = pipees[0];
-		if (i == 0 && prog->infile_fd != -1)
-			file_fds[0] = prog->infile_fd;
-		else if (i == 0)
-			file_fds[0] = open(prog->infile_path, O_RDONLY);
-		pipe(pipees);
-		file_fds[1] = figure_fd1(prog, i, pipees);
-		stat = piper(cmds, prog, file_fds);
-		i += 2;
+		perror(prog->infile_path);
+		exit_prog (prog, errno);
 	}
-	exit (stat);
+	while (++i < prog->cmd_num)
+	{
+		get_outfile_fd(i, prog, file_fds, pipees);
+		cmd = get_full_cmd (prog, i);
+		stat = piper (cmd, prog->env, file_fds[0], file_fds[1]);
+		free_arr ((void **) cmd);
+		close_fds((int []){file_fds[0], file_fds[1], -1});
+		file_fds[0] = pipees[0];
+	}
+	return (stat);
 }
 
 void	read_input(char *del, int out_fd)
 {
 	char	*line;
-	int		done;
 
-	done = 0;
-	ft_printf("heredoc>");
+	ft_printf("heredoc> ");
 	line = get_next_line(STDIN_FILENO);
 	while (line)
 	{
@@ -101,8 +107,6 @@ void	read_input(char *del, int out_fd)
 		}
 		write(out_fd, line, ft_strlen(line));
 		free(line);
-		if (done)
-			break ;
 		ft_printf("heredoc> ");
 		line = get_next_line(STDIN_FILENO);
 	}
@@ -118,20 +122,7 @@ void	here_doc(t_prog *prog)
 	read_input(prog->heredoc_deli, pipees[1]);
 	close (prog->infile_fd);
 	prog->infile_fd = pipees[0];
-	pipe_the_stuff(prog);
 }
-
-/* void pipex (int argc, char *argv[], char *env[])
-{
-	t_prog	*prog;
-
-	// if (argc == 1)
-	// 	exit_prog(NULL, (printf("WRONG NUM OF ARGUMENTS!\n"), 1));
-	prog = prog_creation(argc, argv, env);
-	if (prog->heredoc_deli)
-		here_doc(prog);
-	pipe_the_stuff(prog);
-} */
 
 int	main(int argc, char *argv[], char *env[])
 {
@@ -142,30 +133,25 @@ int	main(int argc, char *argv[], char *env[])
 	prog = prog_creation(argc, argv, env);
 	if (prog->heredoc_deli)
 		here_doc(prog);
-	pipe_the_stuff(prog);
+	exit_prog (prog, pipe_the_stuff(prog));
 	return (0);
 }
-/*
-	printf("-------------------\nARGC: %i\n", argc);
-	ft_printf("\nARGV:");
-	int i = 0;
-	 while (argv[i])
-	 	printf("\t%s\n", argv[i++]);
-	printf("-------------------\n");
-*/
 
 /*
-	printf("cmds num: %i\n", prog->cmd_num);
-	ft_printf("\ncmds:");
-	i = 0;
-	 while (prog->cmds[i])
-	 	printf("\t%s\n", prog->cmds[i++]);
-*/
-
-/*
-	else if (argc == 2)
+	// TO RECIEVE ARGS AS STRING IN COMMAND LINE INSTEAD OF ONE LONG STRING
+if (argc == 2)
 	{
-		argv = ft_split (argv[1], ' ');
-		argc = ft_arrlen((void **) argv);
+		char *s = ft_strjoin ("pipex ", argv[1]);
+		argv = ft_split (s, ' ');
+		free (s);
+		argc = ft_arrlen((void **)argv);
+		prog = prog_creation(argc, argv, env);
+		if (prog->heredoc_deli)
+			here_doc(prog);
+		int stat = pipe_the_stuff (prog);
+		for (int i = 0;argv[i]; i++)
+			free(argv[i]);
+		free(argv);
+		exit_prog (prog, stat);
 	}
 */
