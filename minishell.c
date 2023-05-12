@@ -22,7 +22,7 @@
 		to avoid duplicate commands in history
 	X Add error number and error message handeling
 	O Add support for quotes and double quotes
-	O BONUS 😱
+	O BONUS
 */
 
 void	free_vals(t_mshell *shell)
@@ -127,7 +127,9 @@ int	main(int argc, char **argv, char **envp)
 {
 	static char		*line;
 	static char		**command;
+	// static char		**temp;
 	t_mshell		shell;
+char *temp_line;
 
 	if ((void)argv, (void)argc, signal(SIGINT, handle_signal),
 		signal(SIGQUIT, SIG_IGN), init_env(envp, &shell))
@@ -139,7 +141,25 @@ int	main(int argc, char **argv, char **envp)
 	{
 		if (ft_strlen(line) > 0)
 		{
-			command = ft_split(line, ' ');
+/* 			temp = ft_split(line, ' ');
+
+			for (int i = 0; temp[i];i++)
+				printf ("\t[%s]\n", temp[i]);
+
+			command = resplit_argv(ft_arrlen((void **)temp), temp);
+			for (int i = 0; command[i];i++)
+				printf ("\t[%s]\n", command[i]);
+
+			ft_arrfree((void **)temp); */
+
+			temp_line = ft_strdup(line);
+			command = split_string(temp_line);
+			free(temp_line);
+
+			for (int i = 0; command[i];i++)
+				printf ("\t[%s]\n", command[i]);
+			
+
 			if (command[0])
 				if (handle_commands(command, line, &shell) != 0)
 					return (ft_exit(line, &shell, command));

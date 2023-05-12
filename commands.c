@@ -110,6 +110,8 @@ int	handle_commands(char **command, char *line, t_mshell *shell)
 {
 	char		*tmp;
 
+	printf ("line: %s\n", line);
+
 	//handle_variables(command, shell);
 	if (ft_strncmp(command[0], "exit", 5) == 0)
 		return (handle_exit(command, shell), 1);

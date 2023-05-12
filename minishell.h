@@ -112,4 +112,12 @@ void	ft_animate(int exit);
 int		count_new_lines(char *str);
 void	clean_terminal(int lines);
 
+
+// SPLITTERS
+// static char	*stringize(char *argv[]);
+// static char	*expand_arg(char *str, int counter);
+// static void	split_extand(int *is_quotes, char *str, int *counter);
+char	**split_string(char *str);
+char		**resplit_argv(int argc, char *argv[]);
+
 #endif

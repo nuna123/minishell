@@ -101,15 +101,16 @@ static void	get_cmds(char *argv[], t_prog *prog)
 t_prog	*prog_creation(int argc, char *argv[], char *env[])
 {
 	t_prog	*prog;
-	char	**argv_release_ptr;
+	// char	**argv_release_ptr;
 
 	prog = init_prog(env);
-	argv = resplit_argv(argc, argv);
-	argv_release_ptr = argv;
+/* 	argv = resplit_argv(argc, argv);
+	argv_release_ptr = argv; */
 	argc -= 1;
 	argv += 1;
 	get_infile(&argc, &argv, prog);
 	get_outfile(&argc, &argv, prog);
 	get_cmds(argv, prog);
-	return (free_arr((void **) argv_release_ptr), prog);
+	//free_arr((void **) argv_release_ptr)
+	return (prog);
 }

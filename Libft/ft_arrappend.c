@@ -28,7 +28,7 @@ char	**ft_arrappend(char **arr, char *to_append)
 		ret[i] = arr[i];
 	ret [i] = to_append;
 	ret [i + 1] = NULL;
-	free (arr);
+	ft_arrfree ((void **)arr);
 	arr = ret;
 	return (ret);
 }

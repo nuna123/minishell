@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "minishell.h"
 
 static char	*expand_arg(char *str, int counter)
 {
@@ -24,7 +24,8 @@ static char	*expand_arg(char *str, int counter)
 		argname_len++;
 	argname = ft_substr (str, counter + 1, argname_len);
 	arg = getenv(argname);
-	newstr = ft_calloc((ft_strlen(str) - argname_len)
+	printf("ARG: {%s}\n", arg);
+	newstr = ft_calloc((ft_strlen(str) - argname_len - 1)
 			+ ft_strlen(arg) + 1, sizeof(char));
 	ft_strlcpy(newstr, str, counter + 1);
 	if (arg)
@@ -32,14 +33,16 @@ static char	*expand_arg(char *str, int counter)
 	else
 		counter++;
 	ft_strlcpy(ft_strchr(newstr, 0),
-		str + counter + argname_len + 1, ft_strlen(str) + 1);
+		&str[counter + argname_len + 1], ft_strlen(&str[counter + argname_len + 1]) + 1);
 	free(argname);
 	free(str);
+	
 	return (newstr);
 }
 
 //ADDING ALL ARGV TO ONE INPUT LINE
-static char	*stringize(char *argv[])
+
+/* static char	*stringize(char *argv[])
 {
 	char	*cmds;
 	int		i;
@@ -63,7 +66,7 @@ static char	*stringize(char *argv[])
 			cmds = expand_arg (cmds, i);
 	}
 	return (cmds);
-}
+} */
 
 static void	split_extand(int *is_quotes, char *str, int *counter)
 {
@@ -94,34 +97,55 @@ static void	split_extand(int *is_quotes, char *str, int *counter)
 }
 
 //IS_QUOTES: 0 == NO, 1 == SINGLE QUOTES, 2 == DOUBLE
-static char	**split_string(char *str)
+char	**split_string(char *str)
 {
 	char	**ret;
 	int		counter;
 	int		is_quotes;
+	char	*str_ptr = str;
 
+
+	int i = -1;
+	is_quotes = 0;
+	while (str_ptr[++i])
+	{
+		if (str_ptr[i] == '\'' && (i <= 0 || str_ptr[i - 1] != '\\'))
+			is_quotes = !is_quotes;
+		else if (str_ptr[i] == '$' && !is_quotes)
+			str_ptr = expand_arg (str_ptr, i);
+	}
 	is_quotes = 0;
 	ret = ft_calloc(1, sizeof (char *));
 	counter = -1;
-	while (str[++counter])
+	while (str_ptr[++counter])
 	{
-		if (str[counter] == '$' && is_quotes != 1)
-			str = expand_arg(str, counter);
-		if (str[counter] == ' ' && !is_quotes)
+		if (str_ptr[counter] == ' ' && !is_quotes)
 		{
-			ret = ft_arrappend(ret, ft_substr(str, 0, counter));
-			str = &(str[counter]) + 1;
+			temp = ft_substr(str_ptr, 0, counter);
+			printf("newstr: {%s}\n", temp);
+			ret = ft_arrappend(ret, temp);
+
+			str_ptr = &(str_ptr[counter]) + 1;
 			counter = -1;
 			is_quotes = 0;
 		}
 		else
-			split_extand(&is_quotes, str, &counter);
+			split_extand(&is_quotes, str_ptr, &counter);
 	}
-	if (*str)
-		ret = ft_arrappend(ret, ft_strdup(str));
+	char *temp;
+	if (*str_ptr)
+	{
+		printf("newstr: {%s}\n", str_ptr);
+		temp = malloc(sizeof(char) * ft_strlen(str_ptr) + 1);
+		ft_strlcpy(temp, str_ptr, ft_strlen(str_ptr) + 1);
+		ret = ft_arrappend(ret, temp);
+		for (int i = 0; ret[i]; i++)
+			printf("AAAAAA %s\n", ret[i]);
+	}
+	
 	return (ret);
 }
-
+/* 
 char	**resplit_argv(int argc, char *argv[])
 {
 	char	*str;
@@ -130,8 +154,9 @@ char	**resplit_argv(int argc, char *argv[])
 	if (argc < 2)
 		return (argv);
 	str = stringize (argv);
+	printf ("STR: {%s}\n", str);
 	ret = split_string (str);
 	free (str);
 	return (ret);
-}
+} */
 	// printf ("STR:  {%s}\n", str);

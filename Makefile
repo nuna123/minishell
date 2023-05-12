@@ -33,7 +33,8 @@ SRCS	=	minishell \
 			change_directory \
 			export \
 			export_utils \
-			export_checker
+			export_checker \
+			splitters
 
 OBJ_FOL	=	objs/
 
