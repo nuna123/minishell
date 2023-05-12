@@ -12,6 +12,26 @@
 
 #include "minishell.h"
 
+char	**ft_arrappend(char **arr, char *to_append)
+{
+	char	**ret;
+	int		i;
+
+	i = 0;
+	ret = malloc (sizeof (char *) * (ft_arrlen((void **) arr) + 2));
+	while (arr && arr[i])
+	{
+		ret [i] = ft_strdup(arr[i]);
+		i++;
+	}
+		
+	ret [i] = to_append;
+	ret [i + 1] = NULL;
+	if (arr)
+		ft_arrfree ((void **)arr);
+	return (ret);
+}
+
 static char	*expand_arg(char *str, int counter)
 {
 	char	*argname;
@@ -97,52 +117,52 @@ static void	split_extand(int *is_quotes, char *str, int *counter)
 }
 
 //IS_QUOTES: 0 == NO, 1 == SINGLE QUOTES, 2 == DOUBLE
-char	**split_string(char *str)
+char	**split_string(char **str_ptr)
 {
 	char	**ret;
 	int		counter;
 	int		is_quotes;
-	char	*str_ptr = str;
-
+	char	*temp;
+	char	*str = *str_ptr;
 
 	int i = -1;
 	is_quotes = 0;
-	while (str_ptr[++i])
+	// printf("STR: {%s}\n", str);
+	while (str[++i])
 	{
-		if (str_ptr[i] == '\'' && (i <= 0 || str_ptr[i - 1] != '\\'))
+		if (str[i] == '\'' && (i <= 0 || str[i - 1] != '\\'))
 			is_quotes = !is_quotes;
-		else if (str_ptr[i] == '$' && !is_quotes)
-			str_ptr = expand_arg (str_ptr, i);
+		else if (str[i] == '$' && !is_quotes)
+			str = expand_arg (str, i);
+		*str_ptr = str;
 	}
-	is_quotes = 0;
-	ret = ft_calloc(1, sizeof (char *));
-	counter = -1;
-	while (str_ptr[++counter])
-	{
-		if (str_ptr[counter] == ' ' && !is_quotes)
-		{
-			temp = ft_substr(str_ptr, 0, counter);
-			printf("newstr: {%s}\n", temp);
-			ret = ft_arrappend(ret, temp);
 
-			str_ptr = &(str_ptr[counter]) + 1;
+	// printf("AFTER STR: {%s}\n", str);
+
+	ret = NULL;
+	counter = -1;
+	while (str[++counter])
+	{
+		if (str[counter] == ' ' && !is_quotes)
+		{
+			temp = ft_substr(str, 0, counter);
+			// printf("newstr: {%s}\n", temp);
+			ret = ft_arrappend(ret, temp);
+			str = &(str[counter]) + 1;
 			counter = -1;
 			is_quotes = 0;
 		}
 		else
-			split_extand(&is_quotes, str_ptr, &counter);
+			split_extand(&is_quotes, str, &counter);
 	}
-	char *temp;
-	if (*str_ptr)
+
+	if (*str)
 	{
-		printf("newstr: {%s}\n", str_ptr);
-		temp = malloc(sizeof(char) * ft_strlen(str_ptr) + 1);
-		ft_strlcpy(temp, str_ptr, ft_strlen(str_ptr) + 1);
+		// printf("newstr: {%s}\n", str);
+		temp = malloc(sizeof(char) * ft_strlen(str) + 1);
+		ft_strlcpy(temp, str, ft_strlen(str) + 1);
 		ret = ft_arrappend(ret, temp);
-		for (int i = 0; ret[i]; i++)
-			printf("AAAAAA %s\n", ret[i]);
 	}
-	
 	return (ret);
 }
 /* 
@@ -160,3 +180,22 @@ char	**resplit_argv(int argc, char *argv[])
 	return (ret);
 } */
 	// printf ("STR:  {%s}\n", str);
+
+
+
+int	main(void)
+{
+	char *str = ft_strdup("echo \"$ARG 'hi'\"");
+	printf("STR: %s\n", str);
+
+	char **arr	 = split_string(&str);
+
+	printf ("\n\n\nRET:\n" );
+	for (int i = 0; arr[i]; i++)
+	{
+		printf("\t{%s}\n", arr[i]);
+	}
+
+	free (str);
+	ft_arrfree((void **)arr);
+}

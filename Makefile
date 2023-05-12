@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = minishell
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
 
 LIBFT_FOL = Libft/
 LIBFT = ${addprefix ${LIBFT_FOL}, libft.a}
