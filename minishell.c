@@ -143,10 +143,8 @@ int	main(int argc, char **argv, char **envp)
 			temp_line = ft_strdup(line);
 			command = split_string(&temp_line);
 			free(temp_line);
-			// printf("line: (%p, %s)\n", line, line);
-			if (command[0])
-				if (handle_commands(command, line, &shell) != 0)
-					return (ft_exit(line, &shell, command));
+			if (command[0] && handle_commands(command, line, &shell))
+				return (ft_exit(line, &shell, command));
 		}
 		free(line);
 		line = readline(shell.shell_prompt);

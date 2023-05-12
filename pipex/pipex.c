@@ -82,9 +82,8 @@ int	pipe_the_stuff(t_prog *prog)
 	while (++i < prog->cmd_num)
 	{
 		get_outfile_fd(i, prog, file_fds, pipees);
-		cmd = get_full_cmd (prog, i);
+		cmd = prog->cmds[i];
 		stat = piper (cmd, prog->env, file_fds[0], file_fds[1]);
-		free_arr ((void **) cmd);
 		close_fds((int []){file_fds[0], file_fds[1], -1});
 		file_fds[0] = pipees[0];
 	}

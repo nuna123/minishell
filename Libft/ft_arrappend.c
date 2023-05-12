@@ -17,23 +17,22 @@
 	original arr is freed
 	NOTE: ITEM has to be freeable
 */
-/* char	**ft_arrappend(char **arr, char *to_append)
+
+char	**ft_arrappend(char **arr, char *to_append)
 {
 	char	**ret;
 	int		i;
 
-	i = -1;
+	i = 0;
 	ret = malloc (sizeof (char *) * (ft_arrlen((void **) arr) + 2));
-	printf ("here 1\n");
-	while (arr && arr[++i])
+	while (arr && arr[i])
+	{
 		ret[i] = arr[i];
-	printf ("here 2\n");
+		i++;
+	}
 	ret [i] = to_append;
-	printf ("here 3\n");
 	ret [i + 1] = NULL;
-	printf ("here 4\n");
-	ft_arrfree ((void **)arr);
-	printf ("here 5\n");
+	free (arr);
+	arr = ret;
 	return (ret);
 }
- */

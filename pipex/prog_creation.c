@@ -72,45 +72,41 @@ static void	get_outfile(int *argc, char **argv[], t_prog *prog)
 static void	get_cmds(char *argv[], t_prog *prog)
 {
 	int		i;
-	char	*temp;
-	char	*cmds;
+	char	**cmds;
 
 	i = -1;
-	cmds = ft_strdup("");
+	cmds = NULL;
 	while (argv[++i])
 	{
-		temp = ft_strjoin(cmds, argv[i]);
-		cmds = (free (cmds), temp);
-		if (argv[i + 1])
+		if (ft_strncmp(argv[i], "|", 2) == 0 && cmds)
 		{
-			temp = ft_strjoin(cmds, " ");
-			cmds = (free (cmds), temp);
+			prog->cmds = (char ***) ft_arrappend_void((void **) prog->cmds,
+					(void *) cmds);
+			cmds = NULL;
+		}
+		else
+		{
+			if (!cmds)
+				cmds = ft_arrappend(cmds, get_full_cmd(prog, argv[i]));
+			else
+				cmds = ft_arrappend(cmds, ft_strdup(argv[i]));
 		}
 	}
-	prog->cmds = ft_split(cmds, '|');
-	free(cmds);
-	i = -1;
-	while (prog->cmds[++i])
-	{
-		temp = ft_strtrim(prog->cmds[i], " ");
-		prog->cmds[i] = (free (prog->cmds[i]), temp);
-	}
+	if (cmds)
+		prog->cmds = (char ***) ft_arrappend_void((void **) prog->cmds,
+				(void *) cmds);
 	prog->cmd_num = ft_arrlen((void **) prog->cmds);
 }
 
 t_prog	*prog_creation(int argc, char *argv[], char *env[])
 {
 	t_prog	*prog;
-	// char	**argv_release_ptr;
 
 	prog = init_prog(env);
-/* 	argv = resplit_argv(argc, argv);
-	argv_release_ptr = argv; */
 	argc -= 1;
 	argv += 1;
 	get_infile(&argc, &argv, prog);
 	get_outfile(&argc, &argv, prog);
 	get_cmds(argv, prog);
-	//free_arr((void **) argv_release_ptr)
 	return (prog);
 }

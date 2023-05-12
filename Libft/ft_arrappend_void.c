@@ -1,22 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   header2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nroth <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/12 14:40:22 by nroth             #+#    #+#             */
-/*   Updated: 2023/01/12 14:40:28 by nroth            ###   ########.fr       */
+/*   Created: 2022/10/14 08:56:59 by nroth             #+#    #+#             */
+/*   Updated: 2022/10/14 08:57:05 by nroth            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_new_strjoin(char const *s1, char const *s2)
+/*
+	appends item to void * array and re allocates the space.
+	original arr is freed
+	NOTE: ITEM has to be freeable
+*/
+void	**ft_arrappend_void(void **arr, void *to_append)
 {
-	char	*str;
+	void	**ret;
+	int		i;
 
-	str = ft_strjoin(s1, s2);
-	free ((char *)s1);
-	return (str);
+	i = 0;
+	ret = malloc (sizeof (void *) * (ft_arrlen(arr) + 2));
+	while (arr && arr[i])
+	{
+		ret[i] = arr[i];
+		i++;
+	}
+	ret [i] = to_append;
+	ret [i + 1] = NULL;
+	free (arr);
+	arr = ret;
+	return (ret);
 }

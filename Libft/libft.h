@@ -68,7 +68,6 @@ void			ft_putchar_fd(char c, int fd);
 void			ft_putstr_fd(char *s, int fd);
 void			ft_putendl_fd(char *s, int fd);
 void			ft_putnbr_fd(int n, int fd);
-char			*ft_new_strjoin(char const *s1, char const *s2);
 
 // BONUS
 t_list			*ft_lstnew(void *content);
@@ -91,5 +90,6 @@ size_t			ft_arrlen(void **s);
 void			ft_arrcpy(char **dest, char **src);
 char			**ft_arrappend(char **arr, char *to_append);
 void			ft_arrfree(void **arr);
+void			**ft_arrappend_void(void **arr, void *to_append);
 
 #endif
