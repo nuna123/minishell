@@ -79,7 +79,7 @@ char	*expand_args(char *str)
 		if (str[i] == '\'' && (i <= 0 || str[i - 1] != '\\'))
 			is_quotes = !is_quotes;
 		else if (str[i] == '$' && !is_quotes)
-			str = expand_arg (str, i);
+			str = expand_arg (str, i--);
 	}
 	return (str);
 }
@@ -94,8 +94,10 @@ char	**split_string(char **str_ptr)
 	char	*temp;
 	char	*str;
 
-	str = expand_args(str);
+	str = expand_args(*str_ptr);
+	// printf("STR: {%s}\n", str);
 	*str_ptr = str;
+	is_quotes = 0;
 	ret = NULL;
 	counter = -1;
 	while (str[++counter])
@@ -119,11 +121,10 @@ char	**split_string(char **str_ptr)
 	}
 	return (ret);
 }
-
 /* 
 int	main(void)
 {
-	char *str = ft_strdup("echo \"$ARG 'hi'\"");
+	char *str = ft_strdup("echo $ARG");
 	printf("STR: %s\n", str);
 
 	char **arr	 = split_string(&str);
