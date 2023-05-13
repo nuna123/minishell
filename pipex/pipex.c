@@ -126,22 +126,10 @@ void	here_doc(t_prog *prog)
 int	main(int argc, char *argv[], char *env[])
 {
 	t_prog	*prog;
-/* 	printf("ARGV:");
-	for(int j = 0; argv[j];j++)
-		printf("{%s}", argv[j]);
-	printf("\n");
-	 */
+
 	if (argc == 1)
 		exit_prog(NULL, (printf("WRONG NUM OF ARGUMENTS!\n"), 1));
 	prog = prog_creation(argc, argv, env);
-/* 	for(int i = 0; prog->cmds[i];i++)
-	{
-		for(int j = 0; prog->cmds[i][j];j++)
-	{
-		printf("{%s}\n", prog->cmds[i][j]);
-	}
-	printf("\n");
-	} */
 	if (prog->heredoc_deli)
 		here_doc(prog);
 	exit_prog (prog, pipe_the_stuff(prog));

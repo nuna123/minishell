@@ -67,11 +67,13 @@ static void	split_extand(int *is_quotes, char *str, int *counter)
 	}
 }
 
-char	*expand_args(char *str)
+char	*expand_args(char **str_ptr)
 {
-	int	i;
-	int	is_quotes;
+	int		i;
+	int		is_quotes;
+	char	*str;
 
+	str = *str_ptr;
 	i = -1;
 	is_quotes = 0;
 	while (str[++i])
@@ -81,10 +83,27 @@ char	*expand_args(char *str)
 		else if (str[i] == '$' && !is_quotes)
 			str = expand_arg (str, i--);
 	}
+	*str_ptr = str;
 	return (str);
 }
 
 //IS_QUOTES: 0 == NO, 1 == SINGLE QUOTES, 2 == DOUBLE
+
+void	extand2(char **str, int *counter, int *is_quotes, char ***ret)
+{
+	char	*temp;
+
+	if ((*str)[*counter] == ' ' && !*is_quotes)
+	{
+		temp = ft_substr(*str, 0, *counter);
+		*ret = ft_arrappend(*ret, temp);
+		*str = &((*str)[*counter]) + 1;
+		*counter = -1;
+		*is_quotes = 0;
+	}
+	else
+		split_extand(is_quotes, *str, counter);
+}
 
 char	**split_string(char **str_ptr)
 {
@@ -94,25 +113,12 @@ char	**split_string(char **str_ptr)
 	char	*temp;
 	char	*str;
 
-	str = expand_args(*str_ptr);
-	// printf("STR: {%s}\n", str);
-	*str_ptr = str;
+	str = expand_args(str_ptr);
 	is_quotes = 0;
 	ret = NULL;
 	counter = -1;
 	while (str[++counter])
-	{
-		if (str[counter] == ' ' && !is_quotes)
-		{
-			temp = ft_substr(str, 0, counter);
-			ret = ft_arrappend(ret, temp);
-			str = &(str[counter]) + 1;
-			counter = -1;
-			is_quotes = 0;
-		}
-		else
-			split_extand(&is_quotes, str, &counter);
-	}
+		extand2(&str, &counter, &is_quotes, &ret);
 	if (*str)
 	{
 		temp = malloc(sizeof(char) * ft_strlen(str) + 1);
@@ -121,6 +127,7 @@ char	**split_string(char **str_ptr)
 	}
 	return (ret);
 }
+
 /* 
 int	main(void)
 {
