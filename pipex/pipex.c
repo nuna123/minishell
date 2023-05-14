@@ -18,6 +18,33 @@ static void	check_operators(char *argv[], char *env[])
 	int		stat;
 	char	*str;
 
+	i = ft_arrlen((void **) argv);
+	while (--i >= 0)
+	{
+		if (ft_strnstr("&&||", argv[i], 4) && ft_strlen (argv[i]) == 2
+			&& argv[i + 1])
+		{
+			str = argv[i];
+			argv[i] = NULL;
+			argv[0] = "./pipex/pipex";
+			stat = piper(argv, env, STDIN_FILENO, STDOUT_FILENO);
+			if ((stat == 0 && !ft_strncmp(str, "&&", 3))
+				|| (stat != 0 && !ft_strncmp(str, "||", 3)))
+			{
+				argv[i] = "./pipex/pipex";
+				execve("./pipex/pipex", &argv[i], env);
+			}
+			else
+				exit (stat);
+		}
+	}
+}
+/* static void	check_operators(char *argv[], char *env[])
+{
+	int		i;
+	int		stat;
+	char	*str;
+
 	i = -1;
 	while (argv[++i])
 	{
@@ -37,7 +64,7 @@ static void	check_operators(char *argv[], char *env[])
 				exit (stat);
 		}
 	}
-}
+} */
 
 static void	here_doc(t_prog *prog)
 {
