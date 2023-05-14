@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static char	*expand_arg(char *str, int counter)
+static char	*expand_arg(char *str, int counter, t_mshell shell)
 {
 	char	*argname;
 	char	*arg;
@@ -23,7 +23,7 @@ static char	*expand_arg(char *str, int counter)
 	while (!ft_strchr("\'\" ", str[counter + argname_len + 1]))
 		argname_len++;
 	argname = ft_substr (str, counter + 1, argname_len);
-	arg = getenv(argname);
+	arg = get_arg(argname, shell);
 	newstr = ft_calloc((ft_strlen(str) - argname_len - 1)
 			+ ft_strlen(arg) + 1, sizeof(char));
 	ft_strlcpy(newstr, str, counter + 1);
@@ -67,7 +67,7 @@ static void	split_extand(int *is_quotes, char *str, int *counter)
 	}
 }
 
-char	*expand_args(char **str_ptr)
+char	*expand_args(char **str_ptr, t_mshell shell)
 {
 	int		i;
 	int		is_quotes;
@@ -81,7 +81,7 @@ char	*expand_args(char **str_ptr)
 		if (str[i] == '\'' && (i <= 0 || str[i - 1] != '\\'))
 			is_quotes = !is_quotes;
 		else if (str[i] == '$' && !is_quotes)
-			str = expand_arg (str, i--);
+			str = expand_arg (str, i--, shell);
 	}
 	*str_ptr = str;
 	return (str);
@@ -105,7 +105,7 @@ void	extand2(char **str, int *counter, int *is_quotes, char ***ret)
 		split_extand(is_quotes, *str, counter);
 }
 
-char	**split_string(char **str_ptr)
+char	**split_string(t_mshell shell, char **str_ptr)
 {
 	char	**ret;
 	int		counter;
@@ -113,7 +113,7 @@ char	**split_string(char **str_ptr)
 	char	*temp;
 	char	*str;
 
-	str = expand_args(str_ptr);
+	str = expand_args(str_ptr, shell);
 	is_quotes = 0;
 	ret = NULL;
 	counter = -1;

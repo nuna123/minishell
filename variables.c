@@ -89,54 +89,20 @@ void	exit_status(char **command, t_mshell *s, int len, int i)
 		command[i][0] = '\0';
 }
 
-/*	Handle_variable
+/*	get_arg
 
-	Just a helper function for handle_variables.
-	Do not use outside of this scope
+	Loops through the vars array in the t_mshell struct to search for argname
+	returns non-freeable string VAL or NULL
 */
-void	handle_variable(char **command, t_mshell *s, int len, int i)
-{
-	int		j;
-
-	if (ft_strncmp(command[i], "$", 1) == 0)
-	{
-		j = -1;
-		while (s->vars[++j].name)
-		{
-			if (ft_strncmp(s->vars[j].name, command[i] + 1,
-					ft_strlen(s->vars[j].name) + 1) == 0
-				&& s->vars[j].name[0] != '\0')
-			{
-				free(command[i]);
-				command[i] = malloc(ft_strlen(s->vars[j].val) + 1);
-				ft_strlcpy(command[i], s->vars[j].val,
-					ft_strlen(s->vars[j].val) + 1);
-			}
-		}
-		exit_status(command, s, len, i);
-	}
-	home_tilda(command, s, len, i);
-}
-
-/*	Handle_variables
-
-	Loops through the splited command line
-	and replaces valid variable names with their value
-	If its not valid, replaces it with empty string
-	echo $asdas -> \n
-	echo $USER -> jbartosi\n
-	echo -n $use d -> d
-*/
-int	handle_variables(char **command, t_mshell *s)
+char	*get_arg(char *argname, t_mshell shell)
 {
 	int	i;
-	int	len;
 
 	i = -1;
-	while (command[++i])
+	while (shell.vars[++i].name)
 	{
-		len = ft_strlen(command[i]);
-		handle_variable(command, s, len, i);
+		if (!ft_strncmp(argname, shell.vars[i].name, ft_strlen(argname)))
+			return (shell.vars[i].val);
 	}
-	return (0);
+	return (NULL);
 }

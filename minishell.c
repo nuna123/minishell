@@ -141,7 +141,7 @@ int	main(int argc, char **argv, char **envp)
 		if (ft_strlen(line) > 0)
 		{
 			temp_line = ft_strdup(line);
-			command = split_string(&temp_line);
+			command = split_string(shell, &temp_line);
 			free(temp_line);
 			if (command[0] && handle_commands(command, line, &shell))
 				return (ft_exit(line, &shell, command));

@@ -76,8 +76,8 @@ void	handle_exit(char **command, t_mshell *shell);
 
 //	Variables.c
 
-int		handle_variables(char **command, t_mshell *s);
 char	*get_hostname(void);
+char	*get_arg(char *argname, t_mshell shell);
 
 //	Export.c
 
@@ -116,6 +116,6 @@ void	clean_terminal(int lines);
 // static char	*stringize(char *argv[]);
 // static char	*expand_arg(char *str, int counter);
 // static void	split_extand(int *is_quotes, char *str, int *counter);
-char	**split_string(char **str);
+char	**split_string(t_mshell shell, char **str);
 
 #endif
