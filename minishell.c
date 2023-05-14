@@ -23,6 +23,8 @@
 	X Add error number and error message handeling
 	O Add support for quotes and double quotes
 	O BONUS
+
+	++ HISTORY COMMAND?
 */
 
 void	free_vals(t_mshell *shell)

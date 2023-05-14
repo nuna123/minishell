@@ -39,6 +39,26 @@ static char	*expand_arg(char *str, int counter, t_mshell shell)
 	return (newstr);
 }
 
+char	*expand_args(char **str_ptr, t_mshell shell)
+{
+	int		i;
+	int		is_quotes;
+	char	*str;
+
+	str = *str_ptr;
+	i = -1;
+	is_quotes = 0;
+	while (str[++i])
+	{
+		if (str[i] == '\'' && (i <= 0 || str[i - 1] != '\\'))
+			is_quotes = !is_quotes;
+		else if (str[i] == '$' && !is_quotes)
+			str = expand_arg (str, i--, shell);
+	}
+	*str_ptr = str;
+	return (str);
+}
+
 static void	split_extand(int *is_quotes, char *str, int *counter)
 {
 	if ((str[*counter] == '\"' || str[*counter] == '\'')
@@ -67,28 +87,6 @@ static void	split_extand(int *is_quotes, char *str, int *counter)
 	}
 }
 
-char	*expand_args(char **str_ptr, t_mshell shell)
-{
-	int		i;
-	int		is_quotes;
-	char	*str;
-
-	str = *str_ptr;
-	i = -1;
-	is_quotes = 0;
-	while (str[++i])
-	{
-		if (str[i] == '\'' && (i <= 0 || str[i - 1] != '\\'))
-			is_quotes = !is_quotes;
-		else if (str[i] == '$' && !is_quotes)
-			str = expand_arg (str, i--, shell);
-	}
-	*str_ptr = str;
-	return (str);
-}
-
-//IS_QUOTES: 0 == NO, 1 == SINGLE QUOTES, 2 == DOUBLE
-
 void	extand2(char **str, int *counter, int *is_quotes, char ***ret)
 {
 	char	*temp;
@@ -105,6 +103,7 @@ void	extand2(char **str, int *counter, int *is_quotes, char ***ret)
 		split_extand(is_quotes, *str, counter);
 }
 
+//IS_QUOTES: 0 == NO, 1 == SINGLE QUOTES, 2 == DOUBLE
 char	**split_string(t_mshell shell, char **str_ptr)
 {
 	char	**ret;
