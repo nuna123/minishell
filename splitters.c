@@ -34,6 +34,8 @@ static char	*expand_arg(char *str, int counter, t_mshell shell)
 	ft_strlcpy(ft_strchr(newstr, 0),
 		&str[counter + argname_len + 1],
 		ft_strlen(&str[counter + argname_len + 1]) + 1);
+	if (ft_strncmp(argname, "?", 2) == 0)
+		free(arg);
 	free(argname);
 	free(str);
 	return (newstr);

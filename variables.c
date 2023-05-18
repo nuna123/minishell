@@ -99,6 +99,8 @@ char	*get_arg(char *argname, t_mshell shell)
 	int	i;
 
 	i = -1;
+	if (!ft_strncmp(argname, "?", 2))
+		return (ft_itoa(shell.exit_status));
 	while (shell.vars[++i].name)
 	{
 		if (!ft_strncmp(argname, shell.vars[i].name, ft_strlen(argname)))
