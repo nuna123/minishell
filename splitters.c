@@ -39,6 +39,7 @@ static char	*expand_arg(char *str, int counter, t_mshell shell)
 	return (newstr);
 }
 
+//  && (i <= 0 || str[i - 1] != '\\')
 char	*expand_args(char **str_ptr, t_mshell shell)
 {
 	int		i;
@@ -50,9 +51,17 @@ char	*expand_args(char **str_ptr, t_mshell shell)
 	is_quotes = 0;
 	while (str[++i])
 	{
-		if (str[i] == '\'' && (i <= 0 || str[i - 1] != '\\'))
-			is_quotes = !is_quotes;
-		else if (str[i] == '$' && !is_quotes)
+		if ((str[i] == '\"' || str[i] == '\''))
+		{
+			if (is_quotes == 0 && str[i] == '\'')
+				is_quotes = 1;
+			else if (is_quotes == 0)
+				is_quotes = 2;
+			else if ((str[i] == '\'' && is_quotes == 1)
+				|| (str[i] == '\"' && is_quotes == 2))
+				is_quotes = 0;
+		}
+		else if (str[i] == '$' && is_quotes != 1)
 			str = expand_arg (str, i--, shell);
 	}
 	*str_ptr = str;
