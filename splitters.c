@@ -138,7 +138,7 @@ char	**split_string(t_mshell shell, char **str_ptr)
 	return (ret);
 }
 
-/* 
+/*
 int	main(void)
 {
 	char *str = ft_strdup("echo $ARG");

@@ -101,6 +101,8 @@ char	*get_arg(char *argname, t_mshell shell)
 	i = -1;
 	if (!ft_strncmp(argname, "?", 2))
 		return (ft_itoa(shell.exit_status));
+	if (!ft_strncmp(argname, "0", 2))
+		return ("minishell");
 	while (shell.vars[++i].name)
 	{
 		if (!ft_strncmp(argname, shell.vars[i].name, ft_strlen(argname)))
