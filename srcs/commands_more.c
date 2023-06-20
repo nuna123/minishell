@@ -6,7 +6,7 @@
 /*   By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 12:24:21 by jbartosi          #+#    #+#             */
-/*   Updated: 2023/04/08 13:13:26 by jbartosi         ###   ########.fr       */
+/*   Updated: 2023/05/17 18:12:48 by jbartosi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,25 +78,25 @@ void	handle_unset(char **command, t_mshell *shell)
 */
 void	handle_exit(char **command, t_mshell *shell)
 {
-	if (split_len(command) == 1)
+	if (ft_arrlen((void **)command) == 1)
 		return ((void) 0);
-	if (split_len(command) > 2 && ft_isdigit(command[1][0]))
+	if (ft_arrlen((void **)command) > 2 && ft_isdigit(command[1][0]))
 		shell->exit_status = 1;
 	else if (command[1][0] == '-' && ft_isdigit(command[1][1])
-		&& split_len(command) < 3)
+		&& ft_arrlen((void **)command) < 3)
 	{
 		shell->exit_status = 256 + ft_atoi(command[1]);
 	}
 	else if (command[1][0] == '+' && ft_isdigit(command[1][1])
-		&& split_len(command) < 3)
+		&& ft_arrlen((void **)command) < 3)
 	{
 		shell->exit_status = ft_atoi(command[1] + 1);
 	}
-	else if (ft_isdigit(command[1][0]) && split_len(command) < 3)
+	else if (ft_isdigit(command[1][0]) && ft_arrlen((void **)command) < 3)
 	{
 		shell->exit_status = ft_atoi(command[1]);
 	}
-	else if (split_len(command) > 2 && command[1][0] == '-')
+	else if (ft_arrlen((void **)command) > 2 && command[1][0] == '-')
 		shell->exit_status = 1;
 	else
 		shell->exit_status = 2;

@@ -6,49 +6,11 @@
 /*   By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:07:50 by jbartosi          #+#    #+#             */
-/*   Updated: 2023/04/29 14:44:18 by jbartosi         ###   ########.fr       */
+/*   Updated: 2023/05/30 15:48:57 by jbartosi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/*	Handle_echo
-
-	Replicates the functionality of echo in bash
-	Takes splited command line and prints stuff
-	echo -> \n
-	echo sd asd -> sd asd\n
-	echo -n -> Nothing
-	echo -n asd -> asd
-
-*/
-/*void	handle_echo(char **command, t_mshell *shell, int i)
-{
-	if (split_len(command) == 1)
-		printf("\n");
-	else if (!(ft_strncmp(command[1], "-n", 3) == 0))
-	{
-		i = 0;
-		while (command[++i])
-		{
-			printf("%s", command[i]);
-			if (i < split_len(command) - 1 && command[i][0] != '\0')
-				printf(" ");
-		}
-		printf("\n");
-	}
-	else if (ft_strncmp(command[1], "-n", 3) == 0)
-	{
-		i = 1;
-		while (command[++i])
-		{
-			printf("%s", command[i]);
-			if (i < split_len(command) - 1 && command[i][0] != '\0')
-				printf(" ");
-		}
-	}
-	shell->exit_status = 0;
-} */
 
 /*	Handle_pipex
 
@@ -80,7 +42,7 @@ void	add_to_history(char **command, char *trimed_line, t_mshell *shell)
 {
 	int	i;
 
-	if (ft_strncmp(shell->last_line, trimed_line,
+	if (trimed_line && ft_strncmp(shell->last_line, trimed_line,
 			ft_strlen(trimed_line) + 1) != 0)
 	{
 		add_history(trimed_line);
@@ -109,21 +71,30 @@ void	add_to_history(char **command, char *trimed_line, t_mshell *shell)
 int	handle_commands(char **command, char *line, t_mshell *shell)
 {
 	char		*tmp;
+	size_t		cmd_len;
 
+	if (!has_char(line))
+		return (0);
+	cmd_len = ft_arrlen((void **)command);
 	if (ft_strncmp(command[0], "exit", 5) == 0)
 		return (handle_exit(command, shell), 1);
 	else if (ft_strncmp(command[0], "cd", 3) == 0)
 		handle_cd(command, shell);
-	else if (ft_strncmp(command[0], "env", 4) == 0 && split_len(command) == 1)
+	else if (ft_strncmp(command[0], "env", 4) == 0 && cmd_len == 1)
 		handle_env(shell);
-	else if (ft_strncmp(command[0], "unset", 6) == 0 && split_len(command) == 2)
+	else if (ft_strncmp(command[0], "unset", 6) == 0 && cmd_len == 2)
 		handle_unset(command, shell);
-	else if (ft_strncmp(command[0], "export", 7) == 0 && split_len(command) < 3)
+	else if (ft_strncmp(command[0], "export", 7) == 0 && cmd_len < 3)
 		handle_export(command, shell);
 	else
 		handle_pipex(command, shell);
-	return (tmp = ft_strtrim(line, " "), add_to_history(command, tmp, shell),
-		update_prompt(shell), free(tmp), free_split(command), 0);
+	if (has_char(line))
+	{
+		tmp = ft_strtrim(line, " ");
+		add_to_history(command, tmp, shell);
+		free(tmp);
+	}
+	return (update_prompt(shell), ft_arrfree((void **)command), 0);
 }
 
 /* 	else if (ft_strncmp(command[0], "pwd", 4) == 0)

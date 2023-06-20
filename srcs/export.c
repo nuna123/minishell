@@ -135,9 +135,9 @@ int	change_val(char **command, t_mshell *shell)
 */
 void	handle_export(char **command, t_mshell *shell)
 {
-	if (split_len(command) == 1)
+	if (ft_arrlen((void **)command) == 1)
 		print_export(shell);
-	else if (split_len(command) == 2)
+	else if (ft_arrlen((void **)command) == 2)
 	{
 		if (!valid_identifier(command, shell))
 			return ((void) 0);

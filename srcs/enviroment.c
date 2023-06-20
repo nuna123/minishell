@@ -18,7 +18,7 @@
 	Also if there is no user data, fills it with guest and
 	name with computer
 */
-int	check_env(t_mshell *shell)
+static int	check_env(t_mshell *shell)
 {
 	char	pwd[10000];
 
@@ -69,7 +69,7 @@ void	init_vars(char **envp, t_mshell *shell)
 	int		j;
 
 	shell->vars = NULL;
-	shell->vars = malloc((split_len(envp) + 3) * sizeof(t_var));
+	shell->vars = malloc((ft_arrlen((void **)envp) + 3) * sizeof(t_var));
 	i = -1;
 	while (envp[++i])
 	{

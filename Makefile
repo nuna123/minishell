@@ -6,12 +6,12 @@
 #    By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/15 13:56:55 by jbartosi          #+#    #+#              #
-#    Updated: 2023/04/08 13:28:17 by jbartosi         ###   ########.fr        #
+#    Updated: 2023/05/15 14:07:08 by jbartosi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror -g
 
 LIBFT_FOL = Libft/
 LIBFT = ${addprefix ${LIBFT_FOL}, libft.a}
@@ -24,9 +24,7 @@ LIBS = ${LIBFT}
 SRCS	=	minishell \
 			prompt \
 			commands \
-			split_utils \
 			animation \
-			animation_utils \
 			enviroment \
 			commands_more \
 			variables \
@@ -36,9 +34,11 @@ SRCS	=	minishell \
 			export_checker \
 			splitters
 
-OBJ_FOL	=	objs/
+OBJ_FOL	=	./objs/
+SRC_FOL	=	./srcs/
+HEAD_FOL	=	./headers/
 
-SRC_FILES = ${addsuffix .c, ${SRCS}}
+SRC_FILES = ${addprefix ${SRC_FOL}, ${addsuffix .c, ${SRCS}}}
 
 MAKE_FLGS = --no-print-directory --silent
 
@@ -59,7 +59,7 @@ ${LIBS}:
 	@ echo "${GREEN}Finished making libraries :D${NRM_COLOR}"
 
 ${NAME}: ${LIBS} ${SRC_FILES}
-	@ cc ${CFLAGS} ${SRC_FILES} ${LIBS} -I${LIBFT_FOL} -lreadline -o $@
+	@ cc ${CFLAGS} ${SRC_FILES} ${LIBS} -I${LIBFT_FOL} -I${HEAD_FOL} -lreadline -o $@
 	@ echo "${GREEN}${NAME} compiled :D${NRM_COLOR}"
 
 clean:

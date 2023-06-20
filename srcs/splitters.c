@@ -75,7 +75,7 @@ static void	split_extand(int *is_quotes, char *str, int *counter)
 	if ((str[*counter] == '\"' || str[*counter] == '\'')
 		&& !*is_quotes)
 	{
-		if (!str[*counter - 1] || str[*counter - 1] != '\\')
+		if (!*counter || !str[*counter - 1] || str[*counter - 1] != '\\')
 		{
 			*is_quotes = 2;
 			if (str[*counter] == '\'')

@@ -6,7 +6,7 @@
 /*   By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 13:49:18 by jbartosi          #+#    #+#             */
-/*   Updated: 2023/04/29 14:53:59 by jbartosi         ###   ########.fr       */
+/*   Updated: 2023/05/29 16:31:39 by jbartosi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,11 @@
 */
 void	update_oldpwd(t_mshell *shell)
 {
-	int	i;
+	int		i;
+	char	tmp[10000];
 
 	i = -1;
+	getcwd(tmp, 10000);
 	while (shell->vars[++i].name)
 	{
 		if (ft_strncmp(shell->vars[i].name, "OLDPWD", 7) == 0)
@@ -29,6 +31,13 @@ void	update_oldpwd(t_mshell *shell)
 			shell->vars[i].val = malloc(ft_strlen(shell->old_path) + 1);
 			ft_strlcpy(shell->vars[i].val, shell->old_path,
 				ft_strlen(shell->old_path) + 1);
+		}
+		else if (ft_strncmp(shell->vars[i].name, "PWD", 4) == 0)
+		{
+			free(shell->vars[i].val);
+			shell->vars[i].val = malloc(ft_strlen(tmp) + 1);
+			ft_strlcpy(shell->vars[i].val, tmp,
+				ft_strlen(tmp) + 1);
 		}
 	}
 }
@@ -62,8 +71,8 @@ void	go_home(t_mshell *shell)
 	free(shell->old_path);
 	shell->old_path = malloc(ft_strlen(tmp) + 1);
 	ft_strlcpy(shell->old_path, tmp, ft_strlen(tmp) + 1);
-	update_oldpwd(shell);
 	chdir(getenv("HOME"));
+	update_oldpwd(shell);
 	shell->exit_status = 0;
 }
 
@@ -105,7 +114,7 @@ void	ft_chdir(char **command, t_mshell *shell)
 */
 void	handle_cd(char **command, t_mshell *shell)
 {
-	if (split_len(command) == 2)
+	if (ft_arrlen((void **)command) == 2)
 	{
 		if (ft_strncmp(command[1], "~", ft_strlen(command[1])) == 0)
 			go_home(shell);
@@ -120,7 +129,7 @@ void	handle_cd(char **command, t_mshell *shell)
 		else
 			ft_chdir(command, shell);
 	}
-	else if (split_len(command) > 2)
+	else if (ft_arrlen((void **)command) > 2)
 	{
 		shell->exit_status = 1;
 		ft_putstr_fd("cd: too many arguments\n", STDERR_FILENO);

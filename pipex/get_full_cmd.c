@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_full_name.c                                    :+:      :+:    :+:   */
+/*   get_full_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nroth <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 12:10:46 by nroth             #+#    #+#             */
-/*   Updated: 2023/02/14 12:10:47 by nroth            ###   ########.fr       */
+/*   Updated: 2023/05/30 15:39:12 by jbartosi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static char	*gfc_extander(char **split_path, char *cmd)
 		temp = ft_strjoin(split_path[i], "/");
 		path = ft_strjoin(temp, cmd);
 		free(temp);
-		if (access(path, 0) == 0)
+		if (access(path, F_OK) == 0)
 		{
 			errno = 0;
 			return (path);
@@ -44,7 +44,7 @@ char	*get_full_cmd(t_prog *prog, char *cmd)
 		|| !ft_strncmp(cmd, "pwd", 4))
 		return (ft_strdup(cmd));
 	path = getenv("PATH");
-	if (!path)
+	if (!path || ft_strlen(cmd) < 1)
 	{
 		ft_putstr_fd(PROG_NAME, STDERR_FILENO);
 		ft_putstr_fd(cmd, STDERR_FILENO);

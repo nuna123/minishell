@@ -16,7 +16,7 @@
 
 	Utility for counting the number of env vars
 */
-int	count_vals(t_mshell *shell)
+static int	count_vals(t_mshell *shell)
 {
 	int	i;
 

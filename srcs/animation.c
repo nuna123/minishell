@@ -6,18 +6,47 @@
 /*   By: jbartosi <jbartosi@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 11:05:33 by jbartosi          #+#    #+#             */
-/*   Updated: 2023/03/28 12:35:58 by jbartosi         ###   ########.fr       */
+/*   Updated: 2023/05/30 15:23:28 by jbartosi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "animation.h"
+#include "animation_vars.h"
 
+/*	count_nls
+
+	Returns number of \n in string
+*/
+static int	count_nls(char *str)
+{
+	int	count;
+
+	count = 0;
+	while (*str++)
+		if (*str == '\n')
+			count++;
+	return (count);
+}
+
+/*	Clean_terminal
+
+	Goes up a line and deletes it n number of times
+	until the printed picture is gone
+*/
+static void	clean_terminal(int lines)
+{
+	int	i;
+
+	i = 0;
+	while (i++ < lines)
+		printf("\e[F\e[2K");
+}
 /*	Logo
 
 	Prints enlarging logo of 42 in the terminal
 */
-void	logo(void)
+
+static void	animate_logo(void)
 {
 	char	*logo[9];
 	int		i;
@@ -39,7 +68,7 @@ void	logo(void)
 			usleep(350000);
 		else
 			usleep(180000);
-		clean_terminal(count_new_lines(logo[i]) + 1);
+		clean_terminal(count_nls(logo[i]) + 1);
 	}
 	sleep(1);
 }
@@ -48,7 +77,7 @@ void	logo(void)
 
 	Prints shrinking shell in the terminal
 */
-void	shell(void)
+static void	shell(void)
 {
 	char	*shell[9];
 	int		i;
@@ -70,7 +99,7 @@ void	shell(void)
 			usleep(500000);
 		else
 			usleep(180000);
-		clean_terminal(count_new_lines(shell[i]) + 1);
+		clean_terminal(count_nls(shell[i]) + 1);
 	}
 }
 
@@ -85,8 +114,7 @@ void	ft_animate(int exit)
 	int		i;
 	int		maxlines;
 
-	return ;
-	maxlines = count_new_lines(SHELL8) + 1;
+	maxlines = count_nls(SHELL8) + 1;
 	i = -1;
 	while (++i < maxlines)
 		printf("\n");
@@ -94,7 +122,7 @@ void	ft_animate(int exit)
 	while (++i < maxlines)
 		printf("\e[F");
 	if (exit == 0)
-		logo();
+		animate_logo();
 	else if (exit == 1)
 		shell();
 }

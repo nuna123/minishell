@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ANIMATION_H
-# define ANIMATION_H
+#ifndef ANIMATION_VARS_H
+# define ANIMATION_VARS_H
 
 # define LOGO0 "\
           \n\
