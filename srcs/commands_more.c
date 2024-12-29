@@ -52,6 +52,8 @@ void	handle_env(t_mshell *shell)
 void	handle_unset(char **command, t_mshell *shell)
 {
 	int		i;
+	if (ft_arrlen((void **)command) == 1)
+		return;
 
 	i = -1;
 	while (shell->vars[++i].name)

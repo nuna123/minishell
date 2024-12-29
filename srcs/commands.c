@@ -82,7 +82,7 @@ int	handle_commands(char **command, char *line, t_mshell *shell)
 		handle_cd(command, shell);
 	else if (ft_strncmp(command[0], "env", 4) == 0 && cmd_len == 1)
 		handle_env(shell);
-	else if (ft_strncmp(command[0], "unset", 6) == 0 && cmd_len == 2)
+	else if (ft_strncmp(command[0], "unset", 6) == 0 )// && cmd_len == 2
 		handle_unset(command, shell);
 	else if (ft_strncmp(command[0], "export", 7) == 0 && cmd_len < 3)
 		handle_export(command, shell);

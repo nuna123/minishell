@@ -61,23 +61,6 @@ int	ft_exit(char *line, t_mshell *shell, char **command)
 	return (shell->exit_status);
 }
 
-/*	Handle_signal
-
-	Handles signals
-	ioctl sends a fake input signal of \n
-		https://man7.org/linux/man-pages/man2/ioctl_tty.2.html
-	rl_replace_line replaces line in rdline buffer with 0
-	rl_on_new_line begins reading a new line
-*/
-void	handle_signal(int sig)
-{
-	if (sig == SIGINT)
-	{
-		ioctl(STDIN_FILENO, TIOCSTI, "\n");
-		rl_replace_line("", 0);
-		rl_on_new_line();
-	}
-}
 
 int	has_char(char *str)
 {
@@ -91,78 +74,69 @@ int	has_char(char *str)
 	}
 	return (0);
 }
+/*	Handle_signal
 
-/*	Main
-
-	Main function for the project.
-	Displays prompt when waiting for input.
-	Stores entered line and splits it into words.
-	Handles entered commands.
-	Frees prompt, line and splited line and main structure
-	Buildins:
-		echo <-n> MESSAGE
-			Display writen message, even enviromental variables
-		cd PATH
-			Changind the current working directory
-		pwd
-			Display the current working directory
-		unset NAME
-			Disables variable NAME in enviroment
-		env
-			Display all enviromental variables
-		exit
-			Exits the shell
-
-	Code for testers:
-	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
-	{
-		int i = 0;
-		if ((void)argv, (void)argc, signal(SIGINT, handle_signal),
-			signal(SIGQUIT, SIG_IGN), init_env(envp, &shell))
-		return (printf("ERROR: missing enviromental variable\n"), 1);
-		//ft_animate(0);
-		ft_get_prompt(&shell);
-		line = argv[2];
-		while (i == 0)
-		{
-			if (ft_strlen(line) > 0)
-			{
-				command = ft_split(line, ' ');
-				if (ft_strncmp(command[0], "exit", 5) == 0)
-					return (handle_exit(command, &shell), shell.exit_status);
-				else
-					handle_commands(command, line, &shell);
-			}
-			i++;
-		}
-		return (shell.exit_status);
-	}
+	Handles signals
+	ioctl sends a fake input signal of \n
+		https://man7.org/linux/man-pages/man2/ioctl_tty.2.html
+	rl_replace_line replaces line in rdline buffer with 0
+	rl_on_new_line begins reading a new line
 */
+
+void	handle_signal(int sig)
+{
+	if (sig == SIGINT)
+	{
+		// Print a newline for visual clarity
+		write(STDOUT_FILENO, "\n", 1);
+		
+		// Redisplay the prompt
+		rl_replace_line("", 0); // Clear the current input from buffer
+		rl_on_new_line(); // Move the cursor to a new line
+		rl_redisplay(); // Redisplay the prompt
+	}
+	else 
+	{
+		ft_printf("%d\n\n\n",sig);
+	}
+}
 int	main(int argc, char **argv, char **envp)
 {
 	static char		*line;
 	static char		**command;
 	t_mshell		shell;
 	char			*temp_line;
-
-	if ((void)argv, (void)argc, signal(SIGINT, handle_signal),
-		signal(SIGQUIT, SIG_IGN), init_env(envp, &shell))
+	
+	(void) argc;
+	(void) argv;
+	
+	signal(SIGINT, handle_signal); //handle ctrl+c
+	signal(SIGQUIT, SIG_IGN);  //ignore 'ctrl+\'
+	signal(EOF, handle_signal);  //handle ctrl+D
+	
+	if (init_env(envp, &shell))
 		return (printf("ERROR: missing enviromental variable\n"), 1);
 	ft_animate(0);
 	ft_get_prompt(&shell);
 	line = readline(shell.shell_prompt);
 	while (line)
 	{
+		printf("[%s] \n", line);
 		if (ft_strlen(line) > 0 && has_char(line))
 		{
-			temp_line = ft_strtrim(line, " 	");
+			temp_line = ft_strtrim(line, " \t");
 			command = split_string(shell, &temp_line);
 			free(temp_line);
 			if (command && command[0] && handle_commands(command, line, &shell))
 				return (ft_exit(line, &shell, command));
 		}
 		free(line);
+
+		// Regenerate the prompt after each command or signal interrupt
+		ft_get_prompt(&shell);  
 		line = readline(shell.shell_prompt);
+		printf("[%s] \n", line);
 	}
+
 	return (command = NULL, ft_exit(line, &shell, command));
 }

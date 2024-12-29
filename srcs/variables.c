@@ -105,7 +105,8 @@ char	*get_arg(char *argname, t_mshell shell)
 		return ("minishell");
 	while (shell.vars[++i].name)
 	{
-		if (!ft_strncmp(argname, shell.vars[i].name, ft_strlen(argname)))
+		if (!ft_strncmp(argname, shell.vars[i].name, ft_strlen(argname) + 1) )
+		//&& ft_strlen(argname) == ft_strlen(shell.vars[i].name))
 			return (shell.vars[i].val);
 	}
 	return (NULL);

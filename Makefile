@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = minishell
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g -lreadline
 
 LIBFT_FOL = Libft/
 LIBFT = ${addprefix ${LIBFT_FOL}, libft.a}
@@ -59,7 +59,7 @@ ${LIBS}:
 	@ echo "${GREEN}Finished making libraries :D${NRM_COLOR}"
 
 ${NAME}: ${LIBS} ${SRC_FILES}
-	@ cc ${CFLAGS} ${SRC_FILES} ${LIBS} -I${LIBFT_FOL} -I${HEAD_FOL} -lreadline -o $@
+	cc  -lreadline ${CFLAGS} ${SRC_FILES} ${LIBS} -I${LIBFT_FOL} -I${HEAD_FOL} -lreadline -o $@
 	@ echo "${GREEN}${NAME} compiled :D${NRM_COLOR}"
 
 clean:

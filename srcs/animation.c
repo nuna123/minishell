@@ -111,6 +111,8 @@ static void	shell(void)
 */
 void	ft_animate(int exit)
 {
+	return;
+	
 	int		i;
 	int		maxlines;
 
